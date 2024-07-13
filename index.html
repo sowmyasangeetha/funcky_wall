@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Funky Wall Animation</title>
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.146.0/build/three.min.js"></script>
+    <script>  
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+      const renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      // Create funky wall geometry
+      const wallGeometry = new THREE.BoxGeometry(10, 2, 1);
+      const wallMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff }); // White
+
+      const segments = wallGeometry.attributes.position.array.length / 3;
+
+      // Add random height variations to each segment
+      for (let i = 0; i < segments; i++) {
+        const randomOffset = Math.random() * 0.5 - 0.25; // Range between -0.25 and 0.25
+        wallGeometry.attributes.position.array[i * 3 + 1] += randomOffset;
+      }
+
+      wallGeometry.attributes.position.needsUpdate = true; // Important for changes to take effect
+
+      const wall = new THREE.Mesh(wallGeometry, wallMaterial);
+      scene.add(wall);
+
+      camera.position.z = 5;
+
+      let time = 0;
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        // Animate wall material properties based on time
+        wallMaterial.color.setHSL(Math.sin(time * 0.5) + 0.5, 0.5, 0.5); // Cycle through color hues
+        wallMaterial.needsUpdate = true; // Important to update material
+
+        // Animate wall rotation
+        wall.rotation.y += 0.01;
+
+        time += 0.01;
+
+        renderer.render(scene, camera);
+      }
+
+      animate();
+    </script>
+</body>
+</html>
